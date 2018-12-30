@@ -16,8 +16,8 @@ The code implements variational inference for a deep convolutional Gaussian proc
 *   --data_name                 Name of dataset: it can be mnist, notmnist, cifar10, cifar100
 *   --cnn_name                  Name of convolutional structure: it can be lenet, resnet, alexnet
 *   --rf_name                   Name of random feature: it can be rf (random feature), sorf (structure orthogonal random feature)
-*   --nbrb                      Number of blocks in convolutional structure
-*   --ngp                       Number of layer of Gaussian Processes
+*   --nb_conv_blocks            Number of blocks in convolutional structure
+*   --nb_gp_blocks              Number of layer of Gaussian Processes
 *   --ratio_nrf_df              Proportional between number of Gaussian Processes and random features per hidden layer
 *   --is_data_augmentation      Option of data augmentation
 *   --train_time                Total running time to train Deep Convolutional Gaussian Processes
@@ -26,11 +26,10 @@ The code implements variational inference for a deep convolutional Gaussian proc
 *   --test_size                 Testing size
 *   --train_batch_size          Batch size in training phase
 *   --test_batch_size           Batch size in testing phase
-*   --lr                        Learning rate
-*   --mc_train                  Number of Monte Carlo samples used to compute stochastic gradients
+*   --learning_rate             Learning rate
 *   --mc_test                   Number of Monte Carlo samples for predictions
 *   --num_bins                  Number of bins used to compute ECE
-*   --nbtime                    Number of time we make the experiments
+*   --less_print                Only print the value of metric evaluated through training phase
 
 Flags for SORF
 

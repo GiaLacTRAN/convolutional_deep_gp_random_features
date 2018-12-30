@@ -51,7 +51,7 @@ def get_flags():
     tf.app.flags.DEFINE_float('learning_rate', 0.001, 'learning rate')
     tf.app.flags.DEFINE_integer('mc_test', 50, 'mc_test')
     tf.app.flags.DEFINE_integer('num_bins', 20, 'number of bins we use to compute ECE and MCE')
-    tf.app.flags.DEFINE_boolean('less_print', True, 'only print the basic performance of model')
+    tf.app.flags.DEFINE_boolean('less_print', True, 'Only print the value of metric evaluated through training phase')
     return FLAGS
 
 # This function will return the prediction confidence and prediction accuracy and total number of prediction at bin [lower, upper]
