@@ -59,7 +59,7 @@ Here are a few examples to run the Deep GP model on various datasets (we assume 
 python main.py --data_name=mnist --cnn_name=mnistlenet --rf_name=rf --nb_gp_blocks=1 --ratio_nrf_df=1 --train_time=21600000 --display_time=3600000 --ratio_train_size=1.0 --test_size=10000 --train_batch_size=100 --test_batch_size=100 --learning_rate=0.001 --mc_test=50 --num_bins=20 --less_print=True
 ```
 
-### Structured Orthogonal Random Feature (SPRF) ###
+### Structured Orthogonal Random Feature (SORF) ###
 
 ```
 #!bash
