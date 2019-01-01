@@ -226,6 +226,12 @@ class Cnn_Dgp(object):
 					true_false_test = np.reshape((np.argmax(PRED_PROBS_TEST, 1) == np.reshape(test.Y, [-1])), [len(test.Y), 1])
 					uncertainty_test = np.concatenate((true_labels_test, true_false_test, PRED_PROBS_TEST), axis=-1)
 					np.savetxt(folder_name + "/uncer_time" + str(tt).zfill(2) + ".txt", uncertainty_test, fmt='%0.5f', delimiter='\t', newline='\n')
+
+					# Save temporary results
+					filename = folder_name + "/" + "result_" + str(tt).zfill(2) + ".txt"
+					file = open(filename, 'w')
+					file.write(results)
+					file.close()
 				
 				print(results)
 				
