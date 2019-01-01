@@ -15,6 +15,7 @@
 import tensorflow as tf
 import dgp.dgp as dgp
 import dgp.sorf_transform as sorf_transform
+import numpy as np
 
 class Dgp_Sorf_Optim_Mcd(dgp.Dgp):
 	def __init__(self, feature_dim, d_out, nb_gp_blocks=1, ratio_nrf_df=1, keep_prob=0.5, p_sigma2_d=0.01):
@@ -28,10 +29,10 @@ class Dgp_Sorf_Optim_Mcd(dgp.Dgp):
 		# Define the initialized value d1_init, d2_init and d3_init
 		self.d1_init, self.d2_init, self.d3_init = self.create_init_value_d()
 
-		# Define variable d1, d2, d3
-		self.d1, self.d2, self.d3 = self.get_variable_d()
+		# Define variable z1 = d1 - d1_init, z2 = d2 - d2_init, z3 = d3 - d_init
+		self.z1, self.z2, self.z3 = self.get_variable_z()
 		
-		self.omegas = self.d1 + self.d2 + self.d3 + self.d1_init + self.d2_init + self.d3_init
+		self.omegas = self.z1 + self.z2 + self.z3 + self.d1_init + self.d2_init + self.d3_init
 	
 	def create_binary_scaling_vector(self, d):
 		r_u = tf.random_uniform([1, d], minval=0, maxval=1.0, dtype=tf.float32)
@@ -42,17 +43,17 @@ class Dgp_Sorf_Optim_Mcd(dgp.Dgp):
 	
 	# Define initialized value for variable d1, d2 and d3
 	def create_init_value_d(self):
-		d1 = [tf.Variable(self.create_binary_scaling_vector(self.d_omegas_out[i]), dtype=tf.float32, trainable=False) for i in range(self.nb_gp_blocks)]
-		d2 = [tf.Variable(self.create_binary_scaling_vector(self.d_omegas_out[i]), dtype=tf.float32, trainable=False) for i in range(self.nb_gp_blocks)]
-		d3 = [tf.Variable(self.create_binary_scaling_vector(self.d_omegas_out[i]), dtype=tf.float32, trainable=False) for i in range(self.nb_gp_blocks)]
-		return d1, d2, d3
+		d1_init = [tf.Variable(self.create_binary_scaling_vector(self.d_omegas_out[i]), dtype=tf.float32, trainable=False) for i in range(self.nb_gp_blocks)]
+		d2_init = [tf.Variable(self.create_binary_scaling_vector(self.d_omegas_out[i]), dtype=tf.float32, trainable=False) for i in range(self.nb_gp_blocks)]
+		d3_init = [tf.Variable(self.create_binary_scaling_vector(self.d_omegas_out[i]), dtype=tf.float32, trainable=False) for i in range(self.nb_gp_blocks)]
+		return d1_init, d2_init, d3_init
 
-	# Define variable d1, d2 and d3
-	def get_variable_d(self):
-		d1 = [tf.Variable(self.d1_init[i], dtype=tf.float32) for i in range(self.nb_gp_blocks)]
-		d2 = [tf.Variable(self.d2_init[i], dtype=tf.float32) for i in range(self.nb_gp_blocks)]
-		d3 = [tf.Variable(self.d3_init[i], dtype=tf.float32) for i in range(self.nb_gp_blocks)]
-		return d1, d2, d3
+	# Define variable z1, z2 and z3
+	def get_variable_z(self):
+		z1 = [tf.Variable(tf.random_normal(shape=[1, self.d_omegas_out[i]], mean=0.0, stddev=np.sqrt(self.p_sigma2_d)), dtype=tf.float32) for i in range(self.nb_gp_blocks)]
+		z2 = [tf.Variable(tf.random_normal(shape=[1, self.d_omegas_out[i]], mean=0.0, stddev=np.sqrt(self.p_sigma2_d)), dtype=tf.float32) for i in range(self.nb_gp_blocks)]
+		z3 = [tf.Variable(tf.random_normal(shape=[1, self.d_omegas_out[i]], mean=0.0, stddev=np.sqrt(self.p_sigma2_d)), dtype=tf.float32) for i in range(self.nb_gp_blocks)]
+		return z1, z2, z3
 	
 	def get_name(self):
 		return "dgpsorfoptimmcdrelu" + str(self.nb_gp_blocks) + "nb_gp_blocks"
@@ -62,7 +63,7 @@ class Dgp_Sorf_Optim_Mcd(dgp.Dgp):
 	
 	def compute_layer_times_omega(self, x, id_nb_gp_blocks):
 		layer_times_omega = 1 / (tf.exp(self.log_theta_lengthscales[id_nb_gp_blocks]) * self.d_omegas_in[id_nb_gp_blocks]) \
-			                    * sorf_transform.sorf_transform_optim_mcd(self.layers[id_nb_gp_blocks], self.d1[id_nb_gp_blocks], self.d2[id_nb_gp_blocks], self.d3[id_nb_gp_blocks], \
+			                    * sorf_transform.sorf_transform_optim_mcd(self.layers[id_nb_gp_blocks], self.z1[id_nb_gp_blocks], self.z2[id_nb_gp_blocks], self.z3[id_nb_gp_blocks], \
 								                                          self.d1_init[id_nb_gp_blocks], self.d2_init[id_nb_gp_blocks], self.d3_init[id_nb_gp_blocks], self.keep_prob)
 
 		return layer_times_omega
@@ -70,9 +71,9 @@ class Dgp_Sorf_Optim_Mcd(dgp.Dgp):
 	def get_regu_loss(self):
 		regu_loss = 0.0
 		for i in range(self.nb_gp_blocks):
-			regu_loss = regu_loss + tf.nn.l2_loss(tf.subtract(self.d1[i], self.d1_init[i])) / self.p_sigma2_d
-			regu_loss = regu_loss + tf.nn.l2_loss(tf.subtract(self.d2[i], self.d2_init[i])) / self.p_sigma2_d
-			regu_loss = regu_loss + tf.nn.l2_loss(tf.subtract(self.d3[i], self.d3_init[i])) / self.p_sigma2_d
+			regu_loss = regu_loss + tf.nn.l2_loss(self.z1[i]) / self.p_sigma2_d
+			regu_loss = regu_loss + tf.nn.l2_loss(self.z2[i]) / self.p_sigma2_d
+			regu_loss = regu_loss + tf.nn.l2_loss(self.z3[i]) / self.p_sigma2_d
 			regu_loss = regu_loss + self.keep_prob * tf.nn.l2_loss(self.w[i])
 		return regu_loss
 	

@@ -127,12 +127,16 @@ def sorf_transform(X, D1, D2, D3):
     Xb_D3_H_D2_H_D1_H = hadamard_transform(Xb_D3_H_D2_H_D1, dim, b) #[N, D]
     return Xb_D3_H_D2_H_D1_H
 
-def sample_d(batch_size, z, d_init, keep_prob):
-    nrf = tf.shape(d_init)[1]
-    sampled_d = tf.tile(z, [batch_size, 1])
-    sampled_d = tf.nn.dropout(sampled_d, keep_prob=keep_prob) * keep_prob
-    sampled_d = tf.add(sampled_d, d_init)
-    return sampled_d
+def create_mask(batch_size, D, D_init, keep_prob):
+    nrf = tf.shape(D)[1]
+    ones = tf.ones([batch_size, nrf])
+    keep_prob_matrix = tf.multiply(keep_prob, ones)
+    D_init_over_D = tf.divide(D_init, D)
+    D_init_over_D_tile = tf.tile(D_init_over_D, [batch_size, 1])
+
+    r_u = tf.random_uniform([batch_size, nrf], minval=0, maxval=1.0, dtype=tf.float32)
+    mask = tf.cast(tf.where(r_u < keep_prob_matrix, ones, D_init_over_D_tile), tf.float32)
+    return mask
 
 # This function will return the product of wsorf and X with multiple block based on hadamard transform
 # and apply local parameterization to sorf
@@ -145,20 +149,23 @@ def sample_d(batch_size, z, d_init, keep_prob):
 #  + return Xb .* M3 * D3 .* H * .* M2 * D2 .* H .* M * D1 .* H, where Xb contain b block of X
 #    where M3, M2, M1 are "masks" used to apply local reparameterization trick
 #    M_k (k=1,2,3) is a matrix of [N, dim * b], and [M_k]_{ij} is 1 with keep_prob percent or [Dk_init]_{1j} / Dk_{1j} with 1 - keep_prob percent
-def sorf_transform_optim_mcd(X, z1, z2, z3, d1_init, d2_init, d3_init, keep_prob):
-    nrf = tf.shape(d1_init)[1]
+def sorf_transform_optim_mcd(X, D1, D2, D3, D1_init, D2_init, D3_init, keep_prob):
+    nrf = tf.shape(D1)[1]
     batch_size, dim = tf.shape(X)[0], tf.shape(X)[1]
     b = tf.cast(nrf / dim, tf.int32)
     h = tf.tile(X, [1, b])
 
-    d1 = sample_d(batch_size, z1, d1_init, keep_prob)
-    d2 = sample_d(batch_size, z2, d2_init, keep_prob)
-    d3 = sample_d(batch_size, z3, d3_init, keep_prob)
+    M1 = create_mask(batch_size, D1, D1_init, keep_prob)
+    M2 = create_mask(batch_size, D2, D2_init, keep_prob)
+    M3 = create_mask(batch_size, D3, D3_init, keep_prob)
 
-    h = tf.multiply(d3, h) #[N, D]
+    h = tf.multiply(M3, h)
+    h = tf.multiply(D3, h) #[N, D]
     h = hadamard_transform(h, dim, b) #[N, D]
-    h = tf.multiply(d2, h) #[N, D]
+    h = tf.multiply(M2, h)
+    h = tf.multiply(D2, h) #[N, D]
     h = hadamard_transform(h, dim, b) #[N, D]
-    h = tf.multiply(d1, h) #[N, D]
+    h = tf.multiply(M1, h)
+    h = tf.multiply(D1, h) #[N, D]
     h = hadamard_transform(h, dim, b) #[N, D]
     return h
