@@ -18,22 +18,22 @@ The code implements variational inference for a deep convolutional Gaussian proc
 *   --rf_name:                   Name of random feature, i.e., `rf` (Random Feature), `sorf` (Structure Orthogonal Random Feature)
 *   --nb_conv_blocks:            Number of blocks in convolutional structure
 *   --nb_gp_blocks:              Number of layer of Gaussian Processes
-*   --ratio_nrf_df              Proportional between number of Gaussian Processes and random features per hidden layer
-*   --is_data_augmentation      Option of data augmentation
-*   --train_time                Total running time to train Deep Convolutional Gaussian Processes
-*   --display_time              Display progress every FLAGS.display_time seconds
-*   --ratio_train_size          Proportion of training set
-*   --test_size                 Testing size
-*   --train_batch_size          Batch size in training phase
-*   --test_batch_size           Batch size in testing phase
-*   --learning_rate             Learning rate
-*   --mc_test                   Number of Monte Carlo samples for predictions
-*   --num_bins                  Number of bins used to compute ECE
-*   --less_print                Only print the value of metric evaluated through training phase
+*   --ratio_nrf_df:              Proportional between number of Gaussian Processes and random features per hidden layer
+*   --is_data_augmentation:      Option of data augmentation
+*   --train_time:                Total running time to train Deep Convolutional Gaussian Processes
+*   --display_time:              Display progress every `display_time` miliseconds
+*   --ratio_train_size:          Proportion of training set
+*   --test_size:                 Testing size
+*   --train_batch_size:          Batch size in training phase
+*   --test_batch_size:           Batch size in testing phase
+*   --learning_rate:             Learning rate
+*   --mc_test:                   Number of Monte Carlo samples for predictions
+*   --num_bins:                  Number of bins used to compute ECE
+*   --less_print:                Only print the value of metric evaluated through training phase
 
 Flags for SORF
 
-*   --p_sigma2_d                The variance of prior distribution of parameters in SORF
+*   --p_sigma2_d:                The variance of prior distribution of parameters in SORF
 
 
 ## Examples ##
@@ -44,7 +44,7 @@ Here are a few examples to run the Deep GP model on various datasets (we assume 
 
 ```
 #!bash
-# Learn a convolutional GPs model for MNIST data set (data_name=mnist) using lenet structure (cnn_name=mnistlenet). The outputs of 'mnistlenet' structure are 4096-dimenional vector.
+# Learn a convolutional GPs model for MNIST data set (data_name=mnist) using lenet structure (cnn_name=mnistlenet). The outputs of `mnistlenet` structure are 4096-dimenional vector.
 # These convolutional features are fed into a Gaussian Process layer (nb_gp_blocks=1) approximated using Random Features (rf_name=rf).
 # The number of random features is equal to the number of data dimensionality or number of GPs in each hidden layer (ratio_nrf_df=1).
 # In this paper, the variational cost is always approximated by 1 Monte Carlo samples in training phase and use 50 Monte Carlo samples to carry out predictions (mc_test=50)
