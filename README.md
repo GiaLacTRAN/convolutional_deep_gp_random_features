@@ -18,7 +18,7 @@ The code implements variational inference for a deep convolutional strucutre fol
 *   --rf_name:                   Name of random feature, i.e., `rf` (Random Feature), `sorf` (Structure Orthogonal Random Feature).
 *   --nb_conv_blocks:            Number of blocks in convolutional structure.
 *   --nb_gp_blocks:              Number of layers of Gaussian Processes.
-*   --ratio_nrf_df:              Proportion of number of Gaussian Processes and random features per hidden layer. At the moment, our model only works when ratio_nrf_df is a positive integer scalar. 
+*   --ratio_nrf_df:              Proportion of number of Gaussian Processes and random features per hidden layer. At the moment, our model only works when `ratio_nrf_df` is a positive integer scalar. 
 *   --is_data_augmentation:      Option of data augmentation.
 *   --train_time:                Total running time to train Deep Convolutional Gaussian Processes.
 *   --display_time:              Display the evaluations of model in every `display_time` miliseconds.
