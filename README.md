@@ -13,11 +13,11 @@ Currently the code is structured so that the learning of Deep Convolutional Gaus
 
 The code implements variational inference for a deep convolutional Gaussian process approximated using random Fourier features. The code accepts the following options:
 
-*   --data_name                 Name of dataset, i.e., `mnist`, `notmnist`, `cifar10`, `cifar100`
-*   --cnn_name                  Name of convolutional structure, i.e., `lenet`, `resnet`, `alexnet`
-*   --rf_name                   Name of random feature, i.e., `rf` (Random Feature), `sorf` (Structure Orthogonal Random Feature)
-*   --nb_conv_blocks            Number of blocks in convolutional structure
-*   --nb_gp_blocks              Number of layer of Gaussian Processes
+*   --data_name:                 Name of dataset, i.e., `mnist`, `notmnist`, `cifar10`, `cifar100`
+*   --cnn_name:                  Name of convolutional structure, i.e., `lenet`, `resnet`, `alexnet`
+*   --rf_name:                   Name of random feature, i.e., `rf` (Random Feature), `sorf` (Structure Orthogonal Random Feature)
+*   --nb_conv_blocks:            Number of blocks in convolutional structure
+*   --nb_gp_blocks:              Number of layer of Gaussian Processes
 *   --ratio_nrf_df              Proportional between number of Gaussian Processes and random features per hidden layer
 *   --is_data_augmentation      Option of data augmentation
 *   --train_time                Total running time to train Deep Convolutional Gaussian Processes
