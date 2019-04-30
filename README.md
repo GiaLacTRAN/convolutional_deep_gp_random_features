@@ -7,15 +7,15 @@ Gia-Lac TRAN,  Edwin V. Bonilla, John P. Cunningham, Pietro Michiardi, and Mauri
 
 The code is written in python and uses the TensorFlow module; follow https://www.tensorflow.org to install TensorFlow. Our code has been tested with python 3.6 and TensorFlow 1.12.
 
-Currently the code is structured so that the learning of Deep Convolutional Gaussian Processes is done using stochastic gradient optimization and a loss function of interest is displayed on the test error every fixed amount of executing time.
+Currently the code is structured so that the learning of Deep Convolutional Gaussian Processes is done using stochastic gradient optimization and the evaluations are displayed every fixed amount of time.
 
 ## Flags ##
 
 The code implements variational inference for a deep convolutional Gaussian process approximated using random Fourier features. The code accepts the following options:
 
-*   --data_name                 Name of dataset: it can be mnist, notmnist, cifar10, cifar100
-*   --cnn_name                  Name of convolutional structure: it can be lenet, resnet, alexnet
-*   --rf_name                   Name of random feature: it can be rf (random feature), sorf (structure orthogonal random feature)
+*   --data_name                 Name of dataset, i.e., `mnist`, `notmnist`, `cifar10`, `cifar100`
+*   --cnn_name                  Name of convolutional structure, i.e., `lenet`, `resnet`, `alexnet`
+*   --rf_name                   Name of random feature, i.e., `rf` (Random Feature), `sorf` (Structure Orthogonal Random Feature)
 *   --nb_conv_blocks            Number of blocks in convolutional structure
 *   --nb_gp_blocks              Number of layer of Gaussian Processes
 *   --ratio_nrf_df              Proportional between number of Gaussian Processes and random features per hidden layer
